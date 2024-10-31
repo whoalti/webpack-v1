@@ -14,7 +14,7 @@ export default class SomeButton {
         const response = await axios.get(
           `https://jsonplaceholder.typicode.com/posts/${this.id}`,
         );
-        this.id = (this.id + 1) % 5;
+        this.id = Math.max((this.id + 1) % 5, 1);
         const p = document.createElement("h4");
         p.innerHTML = `Title: ${response.data.title}<br>Body: ${response.data.body}`;
         p.classList.add("some-button-text");

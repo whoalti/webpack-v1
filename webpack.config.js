@@ -1,4 +1,9 @@
 const path = require("path");
+const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/index.js",
@@ -11,12 +16,18 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ttf)$/,
+        test: /\.(ttf|woff|woff2|eot|svg)$/,
         type: "asset/resource",
+        generator: {
+          filename: "assets/fonts/[hash][ext][query]",
+        },
       },
       {
-        test: /\.(png|jpg)$/,
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
         type: "asset/resource",
+        generator: {
+          filename: "assets/images/[hash][ext][query]",
+        },
       },
       {
         test: /\.txt$/,
@@ -24,14 +35,14 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
       {
-        test: /\.js$/, // Corrected key
+        test: /\.js$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -42,4 +53,37 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+      new CssMinimizerPlugin(),
+      new ImageMinimizerPlugin({
+        minimizer: {
+          implementation: ImageMinimizerPlugin.imageminMinify,
+          options: {
+            plugins: [
+              ["jpegtran", {progressive: true}],
+              ["optipng", {optimizationLevel: 5}],
+            ],
+          },
+        },
+      }),
+    ],
+  },
+  resolve: {
+    alias: {
+      "@components": path.resolve(__dirname, "src/components/"),
+      "@styles": path.resolve(__dirname, "src/styles/"),
+    },
+    extensions: [".js", ".json"],
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env.API_URL": JSON.stringify("https://api.example.com"),
+    }),
+    new MiniCssExtractPlugin({
+      filename: "styles.css",
+    }),
+  ],
 };

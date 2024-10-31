@@ -8,4 +8,5 @@ export default function addImage() {
   img.src = Kiwi;
   const body = document.querySelector("body");
   body.appendChild(img);
+  body.append(document.createElement("br"));
 }
