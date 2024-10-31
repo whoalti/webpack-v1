@@ -1,0 +1,19 @@
+$font-size: 20px;
+$button-background-color: green;
+$button-font-color: aliceblue;
+$text-font-color: red;
+
+.some-button {
+    font-size: 20px;
+    padding: 10px 15px;
+    margin: 10px 20px;
+    background: $button-background-color;
+    color: $button-font-color;
+    outline: none;
+}
+
+.some-button-text {
+    color: $text-font-color;
+    font-weight: bold;
+}
+
